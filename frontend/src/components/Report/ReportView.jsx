@@ -384,7 +384,27 @@ export default function ReportView() {
       margin: 10,
       filename: "resume-analysis-report.pdf",
       image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        // html2canvas clones the DOM before rasterizing. The on-screen
+        // element is hidden via opacity/z-index to stay out of the way;
+        // in the clone we restore it to full visibility so the capture
+        // actually contains the rendered report.
+        onclone: (clonedDoc) => {
+          const el = clonedDoc.querySelector("[data-pdf-root]");
+          if (el) {
+            el.style.opacity = "1";
+            el.style.position = "static";
+            el.style.left = "auto";
+            el.style.top = "auto";
+            el.style.zIndex = "auto";
+            el.style.pointerEvents = "auto";
+            el.style.overflow = "visible";
+          }
+        },
+      },
       jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
       pagebreak: { mode: ["avoid-all", "css", "legacy"] },
     })
@@ -573,6 +593,7 @@ export default function ReportView() {
               into capturing an empty frame. */}
           <div
             ref={printRef}
+            data-pdf-root
             aria-hidden="true"
             style={{
               position: "fixed", top: 0, left: 0,

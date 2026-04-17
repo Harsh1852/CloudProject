@@ -176,9 +176,13 @@ export default function JobDetail() {
   );
   if (!job) return <div style={{ textAlign: "center", padding: 80, color: "#64748b" }}>Loading…</div>;
 
-  const salary = (job.salaryMin || job.salaryMax)
-    ? `$${Math.round((job.salaryMin || job.salaryMax) / 1000)}k${job.salaryMax && job.salaryMin ? ` – $${Math.round(job.salaryMax / 1000)}k` : ""}`
-    : null;
+  const salary = (() => {
+    const { salaryMin: lo, salaryMax: hi } = job;
+    if (!lo && !hi) return null;
+    const fmt = (n) => `$${Math.round(n / 1000)}k`;
+    if (lo && hi && lo !== hi) return `${fmt(lo)} – ${fmt(hi)}`;
+    return fmt(lo || hi);
+  })();
 
   return (
     <div style={s.page}>

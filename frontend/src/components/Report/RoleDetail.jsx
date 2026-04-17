@@ -95,7 +95,9 @@ const s = {
 function formatSalary(min, max) {
   if (!min && !max) return null;
   const fmt = (n) => `$${Math.round(n / 1000)}k`;
-  if (min && max) return `${fmt(min)} – ${fmt(max)}`;
+  // Adzuna often returns min == max when the posting is a point estimate —
+  // show a single value instead of "$130k – $130k".
+  if (min && max && min !== max) return `${fmt(min)} – ${fmt(max)}`;
   return fmt(min || max);
 }
 
