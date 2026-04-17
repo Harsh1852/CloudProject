@@ -375,16 +375,26 @@ export default function ReportView() {
   }, [resultId]);
 
   function handleDownloadPDF() {
-    if (!printRef.current) return;
+    if (!printRef.current) {
+      alert("PDF preview not ready. Please try again in a moment.");
+      return;
+    }
     setDownloading(true);
     html2pdf().set({
       margin: 10,
       filename: "resume-analysis-report.pdf",
       image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
+      html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
       jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
       pagebreak: { mode: ["avoid-all", "css", "legacy"] },
-    }).from(printRef.current).save().finally(() => setDownloading(false));
+    })
+      .from(printRef.current)
+      .save()
+      .catch((err) => {
+        console.error("PDF generation failed", err);
+        alert("Could not generate PDF. Please try again.");
+      })
+      .finally(() => setDownloading(false));
   }
 
   async function handleDelete() {
@@ -557,8 +567,20 @@ export default function ReportView() {
             </div>
           )}
 
-          {/* Off-screen print target for PDF downloads */}
-          <div ref={printRef} style={{ position: "absolute", left: -9999, top: 0, width: 820, padding: 24, background: "#fff" }}>
+          {/* Print target for PDF downloads. Kept in normal layout (fixed position,
+              width: 820 so html2canvas gets a full layout pass) but invisible
+              via opacity + pointer-events. Using left: -9999 tripped html2canvas
+              into capturing an empty frame. */}
+          <div
+            ref={printRef}
+            aria-hidden="true"
+            style={{
+              position: "fixed", top: 0, left: 0,
+              width: 820, padding: 24, background: "#fff",
+              opacity: 0, pointerEvents: "none",
+              zIndex: -1, overflow: "hidden",
+            }}
+          >
             <PrintableReport result={result} />
           </div>
         </>
