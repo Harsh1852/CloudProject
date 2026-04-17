@@ -19,7 +19,8 @@ from constructs import Construct
 
 LAMBDA_DIR = os.path.join(os.path.dirname(__file__), "..", "lambdas")
 
-SES_FROM_ADDRESS = "cloud.neu.6620@gmail.com"
+# the sender and receiver email addresses, both needs to be verified.
+SES_FROM_ADDRESS = "cloud.neu.6620@gmail.com" 
 
 
 class FrontendStack(Stack):
