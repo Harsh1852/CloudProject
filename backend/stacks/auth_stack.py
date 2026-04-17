@@ -1,5 +1,5 @@
 """
-Student 1 — Microservice 1: Authentication Service
+Microservice 1: Authentication Service
 Handles user registration (Cognito OTP), email verification, login, and token refresh.
 """
 import os

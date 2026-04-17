@@ -1,5 +1,5 @@
 """
-Student 3 — Microservice 5: Results Service
+Microservice 5: Results Service
 Aggregates AI analysis into structured report records, exposes read API,
 and updates upload status to COMPLETE.
 """

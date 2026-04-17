@@ -1,5 +1,5 @@
 """
-Student 3 — Microservice 6: Notification + Frontend Service
+Microservice 6: Notification + Frontend Service
 Sends email notifications via SES when analysis completes.
 Hosts the React frontend on S3 + CloudFront.
 """

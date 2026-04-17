@@ -1,5 +1,5 @@
 """
-Student 2 — Microservice 3: Resume Parser Service
+Microservice 3: Resume Parser Service
 Consumes S3 upload events from ParseQueue, calls Amazon Textract to extract text,
 stores results in S3, and forwards to the AnalysisQueue.
 """

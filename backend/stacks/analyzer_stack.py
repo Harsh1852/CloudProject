@@ -1,5 +1,5 @@
 """
-Student 2 — Microservice 4: AI Analyzer Service
+Microservice 4: AI Analyzer Service
 Consumes parsed resume text from AnalysisQueue, invokes Amazon Bedrock (Claude 3 Haiku)
 to produce job role matches + strategies, then fans out to Results and Notification queues.
 """

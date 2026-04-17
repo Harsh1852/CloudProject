@@ -1,5 +1,5 @@
 """
-Student 1 — Microservice 2: Resume Upload Service
+Microservice 2: Resume Upload Service
 Handles presigned URL generation, upload confirmation, and emits to the parsing pipeline.
 """
 import os
