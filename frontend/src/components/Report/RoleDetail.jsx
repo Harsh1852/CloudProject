@@ -207,16 +207,39 @@ export default function RoleDetail() {
 
         {/* Right: target companies + jobs */}
         <div>
-          {(role.target_companies || []).length > 0 && (
-            <div style={s.card}>
-              <h2 style={s.cardTitle}>🏢 Target companies</h2>
-              <div>
-                {role.target_companies.map((c, i) => (
-                  <span key={i} style={s.companyChip}>{c}</span>
-                ))}
+          {(() => {
+            // Prefer real companies from the live Adzuna jobs. Fall back to the
+            // LLM-generated target_companies only if we haven't pulled jobs yet.
+            const liveCompanies = Array.from(new Set(
+              jobsForRole.map((j) => (j.company || "").trim()).filter(Boolean),
+            )).slice(0, 8);
+            const companies = liveCompanies.length
+              ? liveCompanies
+              : (role.target_companies || []);
+            const source = liveCompanies.length ? "live" : "suggested";
+            if (companies.length === 0) return null;
+            return (
+              <div style={s.card}>
+                <h2 style={s.cardTitle}>
+                  🏢 Target companies
+                  <span style={{
+                    marginLeft: 8, fontSize: 11, fontWeight: 600,
+                    color: source === "live" ? "#15803d" : "#78716c",
+                    background: source === "live" ? "rgba(22,163,74,0.08)" : "rgba(120,113,108,0.08)",
+                    padding: "2px 9px", borderRadius: 20,
+                    border: `1px solid ${source === "live" ? "rgba(22,163,74,0.2)" : "rgba(120,113,108,0.2)"}`,
+                  }}>
+                    {source === "live" ? "hiring now" : "suggested"}
+                  </span>
+                </h2>
+                <div>
+                  {companies.map((c, i) => (
+                    <span key={i} style={s.companyChip}>{c}</span>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           <div style={s.card}>
             <h2 style={s.cardTitle}>💼 Live openings for this role</h2>

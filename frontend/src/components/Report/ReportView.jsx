@@ -145,6 +145,26 @@ const s = {
     border: "1px solid rgba(120,113,108,0.2)",
   },
   list: { paddingLeft: 18, margin: 0, lineHeight: 1.75, color: "#3f3f46", fontSize: 14 },
+  improvementsGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))",
+    gap: 14,
+  },
+  improvementItem: {
+    display: "flex", gap: 14, alignItems: "flex-start",
+    padding: "14px 16px", background: "rgba(184,134,11,0.04)",
+    border: "1px solid rgba(184,134,11,0.12)", borderRadius: 12,
+  },
+  improvementNum: {
+    width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
+    background: `linear-gradient(135deg,${GOLD_START},${GOLD_END})`,
+    color: "#fff", display: "flex", alignItems: "center", justifyContent: "center",
+    fontSize: 13, fontWeight: 700,
+    boxShadow: "0 2px 6px rgba(184,134,11,0.25)",
+  },
+  improvementText: {
+    flex: 1, fontSize: 14, color: "#3f3f46", lineHeight: 1.55,
+  },
   sectionReviewItem: { marginBottom: 14 },
   sectionReviewLabel: { fontSize: 12, fontWeight: 700, color: GOLD_START, marginBottom: 4, letterSpacing: ".03em" },
   sectionReviewText: { fontSize: 14, color: "#3f3f46", lineHeight: 1.6 },
@@ -456,7 +476,28 @@ export default function ReportView() {
             </div>
           </div>
 
-          {/* Two-column grid: roles left, skills+review right */}
+          {/* Critical improvements — full width for readability */}
+          {criticalImprovements.length > 0 && (
+            <div style={{
+              ...s.card,
+              borderLeft: `4px solid ${GOLD_END}`,
+              background: "linear-gradient(180deg, #fff, rgba(212,175,55,0.03))",
+            }}>
+              <h2 style={s.cardTitle}>
+                <span style={{ color: GOLD_START }}>✦</span> Critical Improvements
+              </h2>
+              <div style={s.improvementsGrid}>
+                {criticalImprovements.map((item, i) => (
+                  <div key={i} style={s.improvementItem}>
+                    <div style={s.improvementNum}>{i + 1}</div>
+                    <div style={s.improvementText}>{item}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Two-column grid: roles left (wider), skills+review right */}
           <div style={s.grid2}>
             {/* Left column */}
             <div>
@@ -498,17 +539,6 @@ export default function ReportView() {
                       <div style={s.sectionReviewText}>{resumeSectionsReview[key]}</div>
                     </div>
                   ) : null)}
-                </div>
-              )}
-
-              {criticalImprovements.length > 0 && (
-                <div style={{ ...s.card, borderLeft: `4px solid ${GOLD_END}` }}>
-                  <h2 style={s.cardTitle}>Critical Improvements</h2>
-                  <ul style={{ ...s.list, paddingLeft: 18 }}>
-                    {criticalImprovements.map((item, i) => (
-                      <li key={i} style={{ marginBottom: 8 }}>{item}</li>
-                    ))}
-                  </ul>
                 </div>
               )}
             </div>
