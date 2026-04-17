@@ -217,13 +217,39 @@ def _job_item_from_adzuna(raw: dict, user_id: str, result_id: str, role: dict) -
     }
 
 
+_SKILL_SEPARATORS = (" — ", " – ", " - ", ": ", ". ", " (")
+
+
+def _short_skill_name(raw: str) -> str:
+    """Trim a Bedrock skill entry down to just the skill name.
+
+    Bedrock often returns skills_to_develop as "Skill — long explanation…". We want
+    "Skill" only, so Tavily queries and UI labels stay crisp. Falls back to a 40-char
+    truncation if no separator is found.
+    """
+    if not raw:
+        return ""
+    text = raw.strip()
+    for sep in _SKILL_SEPARATORS:
+        if sep in text:
+            text = text.split(sep, 1)[0]
+            break
+    return text.strip().rstrip(".,;:")[:40]
+
+
 def _infer_missing_skills(job: dict, skills_to_develop: list) -> list:
-    """Best-effort: intersect the result's skills_to_develop with terms in the JD."""
+    """Best-effort: intersect the result's skills_to_develop with terms in the JD.
+
+    Returns short skill names (stripped of Bedrock's prose explanations) so the UI
+    shows "Kubernetes" instead of the full advisory sentence.
+    """
     if not skills_to_develop:
         return []
+    normalized = [_short_skill_name(s) for s in skills_to_develop if s]
+    normalized = [s for s in normalized if s]
     jd = (job.get("description") or "").lower()
-    missing = [s for s in skills_to_develop if s and s.lower() in jd]
-    return missing or list(skills_to_develop)[:3]
+    missing = [s for s in normalized if s.lower() in jd]
+    return missing or normalized[:3]
 
 
 def _word_count(text: str) -> int:

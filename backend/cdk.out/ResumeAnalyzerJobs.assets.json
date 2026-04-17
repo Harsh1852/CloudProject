@@ -8,26 +8,26 @@
         "packaging": "zip"
       },
       "destinations": {
-        "YOUR_AWS_ACCOUNT_ID-us-east-1-c26f85dd": {
-          "bucketName": "cdk-hnb659fds-assets-YOUR_AWS_ACCOUNT_ID-us-east-1",
+        "307711586938-us-east-1-b3eeab54": {
+          "bucketName": "cdk-hnb659fds-assets-307711586938-us-east-1",
           "objectKey": "186069abfee0d7be4154e7d2ba5686b91caf4a4af94bbb1a00f571502a38d736.zip",
           "region": "us-east-1",
-          "assumeRoleArn": "arn:${AWS::Partition}:iam::YOUR_AWS_ACCOUNT_ID:role/cdk-hnb659fds-file-publishing-role-YOUR_AWS_ACCOUNT_ID-us-east-1"
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::307711586938:role/cdk-hnb659fds-file-publishing-role-307711586938-us-east-1"
         }
       }
     },
-    "f455e7c5c5c5623bf33d19a01436e2705bea6d60fe97186b2214143edba0674b": {
+    "103e0904b3de1294b5e639fad85ed0423eec72005cfd7c3db7de901fdfbe41bb": {
       "displayName": "ResumeAnalyzerJobs Template",
       "source": {
         "path": "ResumeAnalyzerJobs.template.json",
         "packaging": "file"
       },
       "destinations": {
-        "YOUR_AWS_ACCOUNT_ID-us-east-1-69ea98bc": {
-          "bucketName": "cdk-hnb659fds-assets-YOUR_AWS_ACCOUNT_ID-us-east-1",
-          "objectKey": "f455e7c5c5c5623bf33d19a01436e2705bea6d60fe97186b2214143edba0674b.json",
+        "307711586938-us-east-1-c354cf7b": {
+          "bucketName": "cdk-hnb659fds-assets-307711586938-us-east-1",
+          "objectKey": "103e0904b3de1294b5e639fad85ed0423eec72005cfd7c3db7de901fdfbe41bb.json",
           "region": "us-east-1",
-          "assumeRoleArn": "arn:${AWS::Partition}:iam::YOUR_AWS_ACCOUNT_ID:role/cdk-hnb659fds-file-publishing-role-YOUR_AWS_ACCOUNT_ID-us-east-1"
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::307711586938:role/cdk-hnb659fds-file-publishing-role-307711586938-us-east-1"
         }
       }
     }

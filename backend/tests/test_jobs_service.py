@@ -276,6 +276,39 @@ def test_save_tailored_resume_updates_markdown(jobs_handler, jobs_tables):
     assert body["updatedAt"] >= body["createdAt"]
 
 
+def test_short_skill_name_strips_prose(jobs_handler):
+    cases = [
+        ("Kubernetes — To stand out for platform roles you need…", "Kubernetes"),
+        ("Machine Learning: prose prose prose", "Machine Learning"),
+        ("Rust. A modern systems language…", "Rust"),
+        ("SQL (standard dialect)", "SQL"),
+        ("   GraphQL   ", "GraphQL"),
+        ("", ""),
+        ("A" * 80, "A" * 40),
+    ]
+    for raw, expected in cases:
+        assert jobs_handler._short_skill_name(raw) == expected, raw
+
+
+def test_infer_missing_skills_returns_short_names(jobs_handler):
+    job = {"description": "We use kubernetes and graphql daily."}
+    develop = [
+        "Kubernetes — you need this for platform roles",
+        "Rust. A modern systems language",
+        "GraphQL (schema design)",
+    ]
+    result = jobs_handler._infer_missing_skills(job, develop)
+    # kubernetes + graphql match JD; rust does not. Short names returned.
+    assert result == ["Kubernetes", "GraphQL"]
+
+
+def test_infer_missing_skills_falls_back_to_first_three(jobs_handler):
+    job = {"description": "Purely XYZ content here."}
+    develop = ["Kubernetes — why", "Rust: why", "GraphQL. why", "Spark"]
+    result = jobs_handler._infer_missing_skills(job, develop)
+    assert result == ["Kubernetes", "Rust", "GraphQL"]
+
+
 def test_get_tailored_resume_forbids_other_user(jobs_handler, jobs_tables):
     _seed_result(jobs_tables["results"])
     _seed_job(jobs_tables["jobs"])
