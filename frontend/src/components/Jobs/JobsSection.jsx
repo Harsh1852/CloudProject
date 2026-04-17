@@ -15,11 +15,11 @@ const s = {
   title: { fontSize: 18, fontWeight: 700, margin: 0, color: "#0f172a" },
   subtitle: { fontSize: 13, color: "#64748b", marginTop: 4 },
   btn: (primary) => ({
-    background: primary ? "linear-gradient(135deg,#6366f1,#8b5cf6)" : "#fff",
-    color: primary ? "#fff" : "#6366f1",
-    border: primary ? "none" : "1.5px solid #6366f1",
+    background: primary ? "linear-gradient(135deg,#b8860b,#d4af37)" : "#fff",
+    color: primary ? "#fff" : "#b8860b",
+    border: primary ? "none" : "1.5px solid #b8860b",
     borderRadius: 10, padding: "9px 18px", fontSize: 13, fontWeight: 600,
-    cursor: "pointer", transition: "all .15s", boxShadow: primary ? "0 2px 10px rgba(99,102,241,.3)" : "none",
+    cursor: "pointer", transition: "all .15s", boxShadow: primary ? "0 2px 10px rgba(184,134,11,.3)" : "none",
   }),
   group: { marginBottom: 22 },
   groupTitle: {
@@ -65,7 +65,7 @@ function JobCard({ job }) {
       to={`/jobs/${job.jobId}`}
       style={{
         ...s.jobCard,
-        ...(hover ? { transform: "translateY(-2px)", boxShadow: "0 8px 24px rgba(37,99,235,.12)", borderColor: "#bfdbfe" } : null),
+        ...(hover ? { transform: "translateY(-2px)", boxShadow: "0 8px 24px rgba(184,134,11,.12)", borderColor: "#bfdbfe" } : null),
       }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}

@@ -6,43 +6,67 @@
     <title>Resume Analyzer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <style>
       :root {
-        --accent-start: #6366f1;
-        --accent-end: #8b5cf6;
-        --bg: #fafafa;
+        /* Luxury silver + gold palette */
+        --gold-start: #a16207;
+        --gold-mid: #b8860b;
+        --gold-end: #d4af37;
+        --gold-bright: #fbbf24;
+        --silver-50: #fafafa;
+        --silver-100: #f4f4f5;
+        --silver-200: #e4e4e7;
+        --silver-300: #d4d4d8;
+        --silver-400: #a1a1aa;
+        --silver-500: #78716c;
+        --obsidian: #1c1917;
+        --obsidian-900: #0f0e0d;
+        --accent-start: var(--gold-start);
+        --accent-end: var(--gold-end);
+        --bg: #f7f6f3;
         --card: #ffffff;
-        --text: #09090b;
-        --text-muted: #71717a;
-        --border: rgba(9, 9, 11, 0.08);
+        --text: #1c1917;
+        --text-muted: #78716c;
+        --border: rgba(28, 25, 23, 0.08);
       }
       *, *::before, *::after { box-sizing: border-box; }
       html, body { scroll-behavior: smooth; }
       body {
         margin: 0;
         font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        background: var(--bg);
+        background:
+          radial-gradient(1200px 600px at 10% -10%, rgba(212, 175, 55, 0.10), transparent 60%),
+          radial-gradient(900px 500px at 90% 120%, rgba(212, 175, 55, 0.06), transparent 60%),
+          var(--bg);
+        background-attachment: fixed;
         color: var(--text);
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         letter-spacing: -0.005em;
       }
-      a { color: var(--accent-start); text-decoration: none; }
+      a { color: var(--gold-start); text-decoration: none; }
       a:hover { text-decoration: underline; }
+      /* Serif display accent on marquee headings */
+      .display-serif { font-family: "Playfair Display", Georgia, serif; letter-spacing: -0.01em; }
+      /* Gold gradient text utility */
+      .gold-text {
+        background: linear-gradient(135deg, var(--gold-start), var(--gold-end));
+        -webkit-background-clip: text; background-clip: text;
+        color: transparent; -webkit-text-fill-color: transparent;
+      }
       /* Polished scrollbar */
       ::-webkit-scrollbar { width: 10px; height: 10px; }
       ::-webkit-scrollbar-track { background: transparent; }
       ::-webkit-scrollbar-thumb {
-        background: rgba(9, 9, 11, 0.15);
+        background: rgba(28, 25, 23, 0.15);
         border-radius: 10px;
         border: 2px solid var(--bg);
       }
-      ::-webkit-scrollbar-thumb:hover { background: rgba(9, 9, 11, 0.25); }
-      /* Subtle text selection */
+      ::-webkit-scrollbar-thumb:hover { background: rgba(28, 25, 23, 0.28); }
       ::selection {
-        background: rgba(139, 92, 246, 0.25);
-        color: #09090b;
+        background: rgba(184, 134, 11, 0.25);
+        color: var(--text);
       }
     </style>
   </head>

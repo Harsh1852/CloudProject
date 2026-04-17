@@ -8,6 +8,7 @@ import ResetPassword from "./components/Auth/ResetPassword";
 import Profile from "./components/Auth/Profile";
 import ResumeUpload from "./components/Resume/ResumeUpload";
 import ReportView from "./components/Report/ReportView";
+import RoleDetail from "./components/Report/RoleDetail";
 const JobDetail = lazy(() => import("./components/Jobs/JobDetail"));
 const TailoredResumeEditor = lazy(() => import("./components/Jobs/TailoredResumeEditor"));
 const TrackerBoard = lazy(() => import("./components/Tracker/TrackerBoard"));
@@ -50,25 +51,26 @@ function Nav() {
     <nav className="no-print" style={{
       display: "flex", alignItems: "center", justifyContent: "space-between",
       padding: "0 32px", height: 64,
-      background: "rgba(9, 9, 11, 0.85)",
+      background: "linear-gradient(180deg, rgba(28,25,23,0.92), rgba(15,14,13,0.88))",
       backdropFilter: "blur(20px)",
       WebkitBackdropFilter: "blur(20px)",
-      borderBottom: "1px solid rgba(255,255,255,0.08)",
+      borderBottom: "1px solid rgba(212, 175, 55, 0.18)",
       position: "sticky", top: 0, zIndex: 50,
     }}>
       {/* Brand */}
-      <Link to="/dashboard" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 10 }}>
+      <Link to="/dashboard" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 12 }}>
         <div style={{
-          width: 28, height: 28, borderRadius: 8,
-          background: "linear-gradient(135deg,#6366f1,#8b5cf6)",
+          width: 30, height: 30, borderRadius: 8,
+          background: "linear-gradient(135deg,#b8860b,#d4af37,#fbbf24)",
           display: "flex", alignItems: "center", justifyContent: "center",
-          fontWeight: 800, fontSize: 14, color: "#fff",
-          boxShadow: "0 2px 8px rgba(139,92,246,.4)",
+          fontWeight: 800, fontSize: 15, color: "#1c1917",
+          boxShadow: "0 2px 10px rgba(212,175,55,.45), inset 0 1px 0 rgba(255,255,255,0.25)",
+          fontFamily: '"Playfair Display", Georgia, serif',
         }}>R</div>
         <span style={{
-          fontWeight: 700, fontSize: 16, color: "#fff", letterSpacing: "-0.3px",
+          fontWeight: 600, fontSize: 16, color: "#fafafa", letterSpacing: "-0.2px",
         }}>
-          Resume Analyzer
+          Resume <span className="gold-text" style={{ fontWeight: 700 }}>Analyzer</span>
         </span>
       </Link>
 
@@ -102,10 +104,10 @@ function Nav() {
             >
               <div style={{
                 width: 28, height: 28, borderRadius: "50%",
-                background: "linear-gradient(135deg,#6366f1,#8b5cf6)",
+                background: "linear-gradient(135deg,#b8860b,#d4af37)",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 fontWeight: 700, fontSize: 11, color: "#fff", flexShrink: 0,
-                boxShadow: "0 2px 6px rgba(139,92,246,.3)",
+                boxShadow: "0 2px 6px rgba(212,175,55,.3)",
               }}>
                 {initials}
               </div>
@@ -149,6 +151,7 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<RequireAuth><ResumeUpload /></RequireAuth>} />
         <Route path="/results/:resultId" element={<RequireAuth><ReportView /></RequireAuth>} />
+        <Route path="/results/:resultId/roles/:roleIndex" element={<RequireAuth><RoleDetail /></RequireAuth>} />
         <Route path="/jobs/:jobId" element={<RequireAuth><Suspense fallback={<PageFallback />}><JobDetail /></Suspense></RequireAuth>} />
         <Route path="/tailored-resumes/:resumeId" element={<RequireAuth><Suspense fallback={<PageFallback />}><TailoredResumeEditor /></Suspense></RequireAuth>} />
         <Route path="/tracker" element={<RequireAuth><Suspense fallback={<PageFallback />}><TrackerBoard /></Suspense></RequireAuth>} />

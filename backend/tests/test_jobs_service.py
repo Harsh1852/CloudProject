@@ -45,7 +45,7 @@ def test_unauthorized_returns_401(jobs_handler):
 
 # ── /jobs/search ──────────────────────────────────────────────────────────────
 
-def _fake_adzuna(role, country, results_per_page=3):
+def _fake_adzuna(role, country, results_per_page=3, skills=None):
     return [
         {
             "title": f"{role} at Acme",
@@ -116,6 +116,38 @@ def test_search_jobs_forbids_other_users_result(jobs_handler, jobs_tables):
         None,
     )
     assert resp["statusCode"] == 404
+
+
+def test_search_jobs_forwards_candidate_skills_to_adzuna(jobs_handler, jobs_tables):
+    """skillsToHighlight from the report are normalized and passed as the skills
+    argument, so two candidates with the same role but different stacks see
+    different listings."""
+    _seed_result(jobs_tables["results"],
+                 skills_to_develop=["K8s"],
+                 top_roles=[{"title": "Backend Engineer", "match_percentage": 80,
+                             "resume_gaps": []}])
+    jobs_tables["results"].update_item(
+        Key={"userId": USER, "resultId": RESULT_ID},
+        UpdateExpression="SET skillsToHighlight = :s",
+        ExpressionAttributeValues={":s": [
+            "Python — core language", "AWS Lambda: serverless",
+            "React", "GraphQL (schema design)",
+        ]},
+    )
+
+    captured_skills = {}
+
+    def fake(role, country, results_per_page=3, skills=None):
+        captured_skills["value"] = skills
+        return []
+
+    with patch.object(jobs_handler, "adzuna_search", side_effect=fake):
+        jobs_handler.api_handler(
+            _event("POST", "/jobs/search", body={"resultId": RESULT_ID}), None,
+        )
+
+    # Short names only (stripped), and at most 4 of them.
+    assert captured_skills["value"] == ["Python", "AWS Lambda", "React", "GraphQL"]
 
 
 def test_search_jobs_requires_resultId(jobs_handler):

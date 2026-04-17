@@ -8,7 +8,7 @@ const s = {
   title: { margin: "0 0 24px", fontSize: 24, fontWeight: 700 },
   label: { display: "block", marginBottom: 6, fontSize: 14, fontWeight: 500 },
   input: { width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: 8, fontSize: 15, outline: "none", marginBottom: 16 },
-  btn: { width: "100%", padding: "11px 0", background: "#2563eb", color: "#fff", border: "none", borderRadius: 8, fontSize: 16, fontWeight: 600, cursor: "pointer", marginTop: 4 },
+  btn: { width: "100%", padding: "11px 0", background: "#b8860b", color: "#fff", border: "none", borderRadius: 8, fontSize: 16, fontWeight: 600, cursor: "pointer", marginTop: 4 },
   err: { color: "#dc2626", fontSize: 14, marginBottom: 12 },
   ok: { color: "#16a34a", fontSize: 14, marginBottom: 12 },
   foot: { textAlign: "center", marginTop: 20, fontSize: 14, color: "#6b7280" },
@@ -64,7 +64,7 @@ export default function Login() {
             onChange={(e) => setForm({ ...form, email: e.target.value })} />
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
             <label style={{ ...s.label, marginBottom: 0 }}>Password</label>
-            <Link to="/forgot-password" style={{ fontSize: 13, color: "#2563eb" }}>Forgot password?</Link>
+            <Link to="/forgot-password" style={{ fontSize: 13, color: "#b8860b" }}>Forgot password?</Link>
           </div>
           <input style={s.input} type="password" placeholder="••••••••" required value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })} />

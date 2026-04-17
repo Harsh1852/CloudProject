@@ -15,15 +15,15 @@ const STATUS_LABELS = {
 };
 const STATUS_COLORS = {
   PENDING: "#6b7280", UPLOADED: "#6b7280", PARSING: "#d97706",
-  ANALYZING: "#2563eb", COMPLETE: "#16a34a", FAILED: "#dc2626",
+  ANALYZING: "#b8860b", COMPLETE: "#16a34a", FAILED: "#dc2626",
 };
 
 const s = {
   page: { maxWidth: 960, margin: "32px auto", padding: "0 24px 60px" },
   hero: {
-    background: "radial-gradient(circle at 20% 0%, #6366f1 0%, #4f46e5 30%, #09090b 75%)",
+    background: "radial-gradient(circle at 20% 0%, #b8860b 0%, #4f46e5 30%, #09090b 75%)",
     borderRadius: 20, padding: "38px 40px", color: "#fff",
-    boxShadow: "0 10px 40px rgba(99, 102, 241, 0.18), 0 2px 8px rgba(0,0,0,0.05)",
+    boxShadow: "0 10px 40px rgba(184, 134, 11, 0.18), 0 2px 8px rgba(0,0,0,0.05)",
     marginBottom: 28, position: "relative", overflow: "hidden",
     border: "1px solid rgba(255,255,255,0.06)",
   },
@@ -57,15 +57,15 @@ const s = {
   },
   cardTitle: { margin: "0 0 18px", fontSize: 18, fontWeight: 700, color: "#09090b", letterSpacing: "-0.01em" },
   dropzone: (drag) => ({
-    border: `2px dashed ${drag ? "#2563eb" : "#cbd5e1"}`,
+    border: `2px dashed ${drag ? "#b8860b" : "#cbd5e1"}`,
     borderRadius: 12, padding: "48px 24px", textAlign: "center",
     cursor: "pointer", background: drag ? "#eff6ff" : "#f8fafc",
     transition: "all .18s",
   }),
   btnPrimary: {
-    padding: "11px 22px", background: "linear-gradient(135deg,#6366f1,#8b5cf6)", color: "#fff",
+    padding: "11px 22px", background: "linear-gradient(135deg,#b8860b,#d4af37)", color: "#fff",
     border: "none", borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer",
-    boxShadow: "0 4px 14px rgba(99,102,241,.35)", letterSpacing: "-0.005em",
+    boxShadow: "0 4px 14px rgba(184,134,11,.35)", letterSpacing: "-0.005em",
     transition: "transform .12s ease, box-shadow .12s ease",
   },
   btnGhost: {
@@ -82,7 +82,7 @@ const s = {
     padding: "3px 10px", borderRadius: 20,
   }),
   progress: { height: 4, background: "#e5e7eb", borderRadius: 2, overflow: "hidden", marginTop: 10 },
-  progressBar: (p) => ({ height: "100%", width: `${p}%`, background: "#2563eb", borderRadius: 2, transition: "width .3s" }),
+  progressBar: (p) => ({ height: "100%", width: `${p}%`, background: "#b8860b", borderRadius: 2, transition: "width .3s" }),
   err: { color: "#dc2626", fontSize: 13, marginTop: 10 },
 };
 
@@ -290,7 +290,7 @@ export default function ResumeUpload() {
           icon="📋"
           title="Application Tracker"
           desc="Kanban of every job you've applied to, with interview rounds and status timeline."
-          accent="#2563eb"
+          accent="#b8860b"
         />
         <ActionCard
           to="/tracker/new"

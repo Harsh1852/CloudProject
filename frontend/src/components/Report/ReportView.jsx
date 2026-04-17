@@ -1,51 +1,337 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import html2pdf from "html2pdf.js";
 import { getResult, getResumeViewUrl, deleteUpload, deleteResult } from "../../services/api";
 import JobsSection from "../Jobs/JobsSection";
 
+/* ────────────────────────────────────────────────────────────────────────────
+ * Full-screen report layout. Top roles are compact cards with "View details →"
+ * buttons that route to /results/:id/roles/:idx. The old narrow report format
+ * is still rendered — off-screen — so the Download PDF button produces the
+ * detailed document the user expects.
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+const GOLD_START = "#b8860b";
+const GOLD_END = "#d4af37";
+
 const s = {
-  page: { maxWidth: 820, margin: "40px auto", padding: "0 20px 60px" },
-  card: { background: "#fff", borderRadius: 12, padding: "28px 32px", boxShadow: "0 2px 12px rgba(0,0,0,.07)", marginBottom: 20 },
-  header: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 },
-  sectionTitle: { fontSize: 17, fontWeight: 700, margin: "0 0 16px" },
-  score: { fontSize: 48, fontWeight: 800, color: "#2563eb", lineHeight: 1 },
-  scoreLabel: { color: "#6b7280", fontSize: 14, marginTop: 4 },
-  summary: { color: "#374151", lineHeight: 1.6, fontSize: 15 },
-  roleCard: { border: "1px solid #e5e7eb", borderRadius: 10, padding: "16px 20px", marginBottom: 12 },
-  roleTitle: { fontWeight: 700, fontSize: 16, marginBottom: 4 },
-  matchBadge: (pct) => ({
-    display: "inline-block", fontSize: 12, fontWeight: 700, padding: "2px 10px",
-    borderRadius: 20, background: pct >= 80 ? "#dcfce7" : pct >= 60 ? "#fef9c3" : "#fee2e2",
-    color: pct >= 80 ? "#15803d" : pct >= 60 ? "#854d0e" : "#b91c1c",
-    marginBottom: 6,
-  }),
-  companies: { display: "flex", flexWrap: "wrap", gap: 6, marginTop: 8 },
-  chip: { fontSize: 12, padding: "3px 10px", background: "#eff6ff", color: "#1d4ed8", borderRadius: 20, fontWeight: 500 },
-  list: { paddingLeft: 20, margin: "0", lineHeight: 1.8, color: "#374151", fontSize: 15 },
-  tagRow: { display: "flex", flexWrap: "wrap", gap: 8, marginTop: 4 },
-  tag: (color) => ({ fontSize: 13, padding: "4px 12px", background: color + "18", color, borderRadius: 20, fontWeight: 500 }),
-  backBtn: { background: "none", border: "none", color: "#2563eb", cursor: "pointer", fontSize: 14, padding: 0, marginBottom: 20 },
-  loading: { textAlign: "center", padding: "80px 0", color: "#6b7280", fontSize: 16 },
-  tabBar: { display: "flex", gap: 4, marginBottom: 20, background: "#f3f4f6", borderRadius: 10, padding: 4 },
+  shell: { maxWidth: 1280, margin: "32px auto", padding: "0 28px 80px" },
+  topBar: {
+    display: "flex", alignItems: "center", justifyContent: "space-between",
+    gap: 12, flexWrap: "wrap", marginBottom: 24,
+  },
+  backBtn: {
+    background: "none", border: "none", color: GOLD_START, cursor: "pointer",
+    fontSize: 14, padding: 0, fontWeight: 500,
+  },
+  rightBtns: { display: "flex", gap: 10, flexWrap: "wrap" },
+  btnPrimary: {
+    background: `linear-gradient(135deg,${GOLD_START},${GOLD_END})`, color: "#fff",
+    border: "none", borderRadius: 10, padding: "10px 20px", fontSize: 13,
+    fontWeight: 600, cursor: "pointer", boxShadow: "0 4px 14px rgba(184,134,11,.3)",
+    letterSpacing: "-0.005em",
+  },
+  btnGhost: {
+    background: "#fff", color: "#1c1917",
+    border: "1px solid rgba(28,25,23,0.14)", borderRadius: 10,
+    padding: "10px 18px", fontSize: 13, fontWeight: 500, cursor: "pointer",
+  },
+  btnDanger: {
+    background: "#fff", color: "#b91c1c",
+    border: "1px solid #fca5a5", borderRadius: 10,
+    padding: "10px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer",
+  },
+  tabBar: {
+    display: "flex", gap: 4, marginBottom: 24,
+    background: "rgba(28,25,23,0.04)", borderRadius: 10, padding: 4,
+    border: "1px solid rgba(28,25,23,0.06)", width: "fit-content",
+  },
   tab: (active) => ({
-    flex: 1, padding: "8px 0", border: "none", cursor: "pointer", borderRadius: 8, fontSize: 14, fontWeight: 600,
+    padding: "8px 18px", border: "none", cursor: "pointer", borderRadius: 8,
+    fontSize: 14, fontWeight: 600,
     background: active ? "#fff" : "transparent",
-    color: active ? "#2563eb" : "#6b7280",
-    boxShadow: active ? "0 1px 4px rgba(0,0,0,.10)" : "none",
+    color: active ? GOLD_START : "#78716c",
+    boxShadow: active ? "0 1px 3px rgba(0,0,0,.08)" : "none",
     transition: "all .15s",
   }),
+  hero: {
+    background: "#fff", borderRadius: 18, padding: "32px 36px", marginBottom: 22,
+    border: "1px solid rgba(28,25,23,0.06)",
+    boxShadow: "0 1px 3px rgba(9,9,11,0.04), 0 6px 24px rgba(184,134,11,0.06)",
+    display: "grid", gridTemplateColumns: "180px 1fr", gap: 34, alignItems: "center",
+  },
+  scoreBlock: { textAlign: "center" },
+  scoreNumber: {
+    fontSize: 64, fontWeight: 800, lineHeight: 1,
+    background: `linear-gradient(135deg,${GOLD_START},${GOLD_END})`,
+    WebkitBackgroundClip: "text", backgroundClip: "text",
+    color: "transparent", WebkitTextFillColor: "transparent",
+    fontFamily: '"Playfair Display", Georgia, serif',
+  },
+  scoreLabel: { color: "#78716c", fontSize: 13, marginTop: 6, fontWeight: 500, letterSpacing: ".04em", textTransform: "uppercase" },
+  scoreBar: { marginTop: 14, height: 5, background: "rgba(28,25,23,0.08)", borderRadius: 3, overflow: "hidden" },
+  scoreBarFill: (pct) => ({
+    height: "100%", width: `${pct}%`,
+    background: `linear-gradient(90deg,${GOLD_START},${GOLD_END})`, borderRadius: 3,
+    transition: "width 1s",
+  }),
+  summary: { color: "#3f3f46", lineHeight: 1.65, fontSize: 15.5 },
+  grid2: { display: "grid", gridTemplateColumns: "minmax(0, 1.3fr) minmax(0, 1fr)", gap: 22, marginBottom: 22 },
+  card: {
+    background: "#fff", borderRadius: 16, padding: "26px 30px",
+    border: "1px solid rgba(28,25,23,0.06)",
+    boxShadow: "0 1px 3px rgba(9,9,11,0.04), 0 4px 16px rgba(9,9,11,0.03)",
+    marginBottom: 22,
+  },
+  cardTitle: { fontSize: 17, fontWeight: 700, color: "#1c1917", margin: "0 0 18px", letterSpacing: "-0.01em" },
+  roleList: { display: "grid", gap: 12 },
+  roleCard: {
+    display: "flex", alignItems: "center", gap: 16,
+    padding: "16px 20px", borderRadius: 12,
+    border: "1px solid rgba(28,25,23,0.08)",
+    background: "#fff",
+    textDecoration: "none", color: "inherit",
+    cursor: "pointer", transition: "all .18s ease",
+  },
+  roleCardHover: {
+    transform: "translateY(-1px)",
+    borderColor: GOLD_END,
+    boxShadow: "0 8px 24px rgba(184,134,11,.12)",
+  },
+  roleMatchRing: (pct) => ({
+    width: 52, height: 52, borderRadius: "50%",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    flexShrink: 0,
+    background: pct >= 80
+      ? `conic-gradient(${GOLD_END} ${pct * 3.6}deg, rgba(28,25,23,0.06) 0deg)`
+      : pct >= 60
+      ? `conic-gradient(${GOLD_START} ${pct * 3.6}deg, rgba(28,25,23,0.06) 0deg)`
+      : `conic-gradient(#78716c ${pct * 3.6}deg, rgba(28,25,23,0.06) 0deg)`,
+  }),
+  roleMatchInner: {
+    width: 42, height: 42, borderRadius: "50%", background: "#fff",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    fontSize: 13, fontWeight: 800, color: "#1c1917",
+  },
+  roleMid: { flex: 1, minWidth: 0 },
+  roleTitle: { fontSize: 15, fontWeight: 700, color: "#1c1917", marginBottom: 3, letterSpacing: "-0.01em" },
+  roleReason: {
+    fontSize: 13, color: "#57534e", lineHeight: 1.45,
+    display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
+    overflow: "hidden",
+  },
+  roleArrow: {
+    color: GOLD_START, fontSize: 20, fontWeight: 400,
+    flexShrink: 0, opacity: 0.7, transition: "transform .2s, opacity .2s",
+  },
+  skillsSection: { marginBottom: 16 },
+  skillsSubTitle: {
+    fontSize: 11, fontWeight: 700, color: "#78716c",
+    textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8,
+  },
+  skillsLine: {
+    color: "#1c1917", fontSize: 14, lineHeight: 1.65, fontWeight: 500,
+  },
+  skillInline: {
+    display: "inline-block", padding: "2px 9px", borderRadius: 20,
+    fontSize: 13, fontWeight: 500, marginRight: 6, marginBottom: 6,
+    background: "rgba(184,134,11,0.08)", color: "#78350f",
+    border: "1px solid rgba(184,134,11,0.18)",
+  },
+  skillInlineDev: {
+    display: "inline-block", padding: "2px 9px", borderRadius: 20,
+    fontSize: 13, fontWeight: 500, marginRight: 6, marginBottom: 6,
+    background: "rgba(120,113,108,0.08)", color: "#57534e",
+    border: "1px solid rgba(120,113,108,0.2)",
+  },
+  list: { paddingLeft: 18, margin: 0, lineHeight: 1.75, color: "#3f3f46", fontSize: 14 },
+  sectionReviewItem: { marginBottom: 14 },
+  sectionReviewLabel: { fontSize: 12, fontWeight: 700, color: GOLD_START, marginBottom: 4, letterSpacing: ".03em" },
+  sectionReviewText: { fontSize: 14, color: "#3f3f46", lineHeight: 1.6 },
+  loading: { textAlign: "center", padding: "80px 0", color: "#78716c", fontSize: 16 },
 };
 
 function ScoreRing({ score }) {
-  const color = score >= 75 ? "#16a34a" : score >= 50 ? "#d97706" : "#dc2626";
   return (
-    <div style={{ textAlign: "center" }}>
-      <div style={{ ...s.score, color }}>{score}</div>
+    <div style={s.scoreBlock}>
+      <div style={s.scoreNumber}>{score}</div>
       <div style={s.scoreLabel}>Resume Score</div>
-      <div style={{ marginTop: 8, height: 6, background: "#e5e7eb", borderRadius: 3, overflow: "hidden" }}>
-        <div style={{ height: "100%", width: `${score}%`, background: color, borderRadius: 3, transition: "width 1s" }} />
+      <div style={s.scoreBar}>
+        <div style={s.scoreBarFill(score)} />
       </div>
+    </div>
+  );
+}
+
+function RoleCard({ role, index, resultId }) {
+  const [hover, setHover] = useState(false);
+  const style = hover ? { ...s.roleCard, ...s.roleCardHover } : s.roleCard;
+  const arrowStyle = hover
+    ? { ...s.roleArrow, transform: "translateX(4px)", opacity: 1 }
+    : s.roleArrow;
+  return (
+    <Link
+      to={`/results/${resultId}/roles/${index}`}
+      style={style}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+    >
+      <div style={s.roleMatchRing(role.match_percentage || 0)}>
+        <div style={s.roleMatchInner}>{role.match_percentage || 0}</div>
+      </div>
+      <div style={s.roleMid}>
+        <div style={s.roleTitle}>{role.title}</div>
+        <div style={s.roleReason}>{role.reason}</div>
+      </div>
+      <div style={arrowStyle}>→</div>
+    </Link>
+  );
+}
+
+function SkillsCard({ highlight, develop }) {
+  if (!highlight?.length && !develop?.length) return null;
+  return (
+    <div style={s.card}>
+      <h2 style={s.cardTitle}>Skills</h2>
+      {highlight?.length > 0 && (
+        <div style={s.skillsSection}>
+          <div style={s.skillsSubTitle}>You excel at</div>
+          <div>
+            {highlight.map((skill, i) => (
+              <span key={i} style={s.skillInline}>{skill}</span>
+            ))}
+          </div>
+        </div>
+      )}
+      {develop?.length > 0 && (
+        <div style={s.skillsSection}>
+          <div style={s.skillsSubTitle}>Consider developing</div>
+          <div>
+            {develop.map((skill, i) => (
+              <span key={i} style={s.skillInlineDev}>{skill}</span>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* The original tall "report" layout — kept for PDF rendering only.
+   Rendered off-screen, then converted to PDF by html2pdf on download. */
+function PrintableReport({ result }) {
+  const {
+    resumeScore = 0, summary, resumeSectionsReview = {}, criticalImprovements = [],
+    topRoles = [], jobSearchStrategies = [], skillsToHighlight = [],
+    skillsToDevelop = [], keyAchievements = [],
+  } = result;
+  const p = {
+    wrap: { fontFamily: "Inter, -apple-system, sans-serif", color: "#111827", lineHeight: 1.5 },
+    h1: { fontSize: 24, fontWeight: 800, margin: "0 0 4px" },
+    sub: { fontSize: 13, color: "#6b7280", marginBottom: 18 },
+    section: { marginBottom: 18, pageBreakInside: "avoid" },
+    h2: { fontSize: 15, fontWeight: 700, margin: "0 0 10px", color: "#b8860b", borderBottom: "1px solid #e5e7eb", paddingBottom: 5 },
+    roleTitle: { fontSize: 13, fontWeight: 700, marginBottom: 4 },
+    roleMeta: { fontSize: 12, color: "#6b7280", marginBottom: 6 },
+    list: { fontSize: 12, paddingLeft: 18, margin: "4px 0", lineHeight: 1.6 },
+    companies: { fontSize: 12, color: "#6b7280", marginTop: 4 },
+    score: { fontSize: 36, fontWeight: 800, color: "#b8860b" },
+  };
+  return (
+    <div style={p.wrap}>
+      <h1 style={p.h1}>Resume Analysis Report</h1>
+      <div style={p.sub}>Score: <span style={p.score}>{resumeScore}</span> / 100</div>
+
+      {summary && (
+        <div style={p.section}>
+          <h2 style={p.h2}>Profile Summary</h2>
+          <p style={{ margin: 0, fontSize: 13 }}>{summary}</p>
+        </div>
+      )}
+
+      {keyAchievements.length > 0 && (
+        <div style={p.section}>
+          <h2 style={p.h2}>Key Achievements</h2>
+          <ul style={p.list}>
+            {keyAchievements.map((a, i) => <li key={i}>{a}</li>)}
+          </ul>
+        </div>
+      )}
+
+      {Object.keys(resumeSectionsReview).length > 0 && (
+        <div style={p.section}>
+          <h2 style={p.h2}>Resume Section Review</h2>
+          {[
+            ["professional_summary", "Professional Summary"],
+            ["work_experience", "Work Experience"],
+            ["skills_section", "Skills"],
+            ["education", "Education"],
+            ["overall_presentation", "Overall Presentation"],
+          ].map(([key, label]) => resumeSectionsReview[key] && (
+            <div key={key} style={{ marginBottom: 10 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#1c1917" }}>{label}</div>
+              <div style={{ fontSize: 12, color: "#374151" }}>{resumeSectionsReview[key]}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {criticalImprovements.length > 0 && (
+        <div style={p.section}>
+          <h2 style={p.h2}>Critical Improvements</h2>
+          <ul style={p.list}>{criticalImprovements.map((c, i) => <li key={i}>{c}</li>)}</ul>
+        </div>
+      )}
+
+      {(skillsToHighlight.length > 0 || skillsToDevelop.length > 0) && (
+        <div style={p.section}>
+          <h2 style={p.h2}>Skills</h2>
+          {skillsToHighlight.length > 0 && (
+            <div style={{ fontSize: 12, marginBottom: 6 }}>
+              <strong>You excel at:</strong> {skillsToHighlight.join(" · ")}
+            </div>
+          )}
+          {skillsToDevelop.length > 0 && (
+            <div style={{ fontSize: 12 }}>
+              <strong>Consider developing:</strong> {skillsToDevelop.join(" · ")}
+            </div>
+          )}
+        </div>
+      )}
+
+      {topRoles.length > 0 && (
+        <div style={p.section}>
+          <h2 style={p.h2}>Top Matching Roles</h2>
+          {topRoles.map((role, i) => (
+            <div key={i} style={{ marginBottom: 12, pageBreakInside: "avoid" }}>
+              <div style={p.roleTitle}>{role.title} — {role.match_percentage}% match</div>
+              <div style={p.roleMeta}>{role.reason}</div>
+              {(role.resume_gaps || []).length > 0 && (
+                <ul style={p.list}>
+                  {role.resume_gaps.map((g, k) => <li key={k}><strong>Gap:</strong> {g}</li>)}
+                </ul>
+              )}
+              {(role.application_tips || []).length > 0 && (
+                <ul style={p.list}>
+                  {role.application_tips.map((t, k) => <li key={k}><strong>Tip:</strong> {t}</li>)}
+                </ul>
+              )}
+              {(role.target_companies || []).length > 0 && (
+                <div style={p.companies}>Target companies: {role.target_companies.join(", ")}</div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {jobSearchStrategies.length > 0 && (
+        <div style={p.section}>
+          <h2 style={p.h2}>Job Search Strategies</h2>
+          <ol style={p.list}>
+            {jobSearchStrategies.map((j, i) => <li key={i}>{j}</li>)}
+          </ol>
+        </div>
+      )}
     </div>
   );
 }
@@ -60,7 +346,7 @@ export default function ReportView() {
   const [resumeLoading, setResumeLoading] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const reportRef = useRef();
+  const printRef = useRef();
 
   useEffect(() => {
     getResult(resultId)
@@ -69,7 +355,7 @@ export default function ReportView() {
   }, [resultId]);
 
   function handleDownloadPDF() {
-    if (!reportRef.current) return;
+    if (!printRef.current) return;
     setDownloading(true);
     html2pdf().set({
       margin: 10,
@@ -78,7 +364,7 @@ export default function ReportView() {
       html2canvas: { scale: 2, useCORS: true },
       jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
       pagebreak: { mode: ["avoid-all", "css", "legacy"] },
-    }).from(reportRef.current).save().finally(() => setDownloading(false));
+    }).from(printRef.current).save().finally(() => setDownloading(false));
   }
 
   async function handleDelete() {
@@ -106,42 +392,38 @@ export default function ReportView() {
   }
 
   if (error) return (
-    <div style={s.page}>
+    <div style={s.shell}>
       <button style={s.backBtn} onClick={() => navigate("/dashboard")}>← Back to Dashboard</button>
-      <div style={{ ...s.card, color: "#dc2626" }}>{error}</div>
+      <div style={{ ...s.card, color: "#b91c1c" }}>{error}</div>
     </div>
   );
 
   if (!result) return <div style={s.loading}>Loading your report…</div>;
 
-  const { resumeScore, summary, resumeSectionsReview = {}, criticalImprovements = [],
+  const {
+    resumeScore = 0, summary, resumeSectionsReview = {}, criticalImprovements = [],
     topRoles = [], jobSearchStrategies = [], skillsToHighlight = [],
-    skillsToDevelop = [], keyAchievements = [] } = result;
+    skillsToDevelop = [], keyAchievements = [],
+  } = result;
 
   return (
-    <div style={s.page}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+    <div style={s.shell}>
+      {/* Top bar */}
+      <div style={s.topBar}>
         <button style={s.backBtn} onClick={() => navigate("/dashboard")}>← Back to Dashboard</button>
         {activeTab === "report" && (
-          <div style={{ display: "flex", gap: 8 }}>
-            <button
-              onClick={handleDownloadPDF}
-              disabled={downloading}
-              style={{ background: "#2563eb", color: "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontSize: 14, fontWeight: 600, cursor: downloading ? "default" : "pointer", opacity: downloading ? 0.7 : 1 }}
-            >
+          <div style={s.rightBtns}>
+            <button onClick={handleDownloadPDF} disabled={downloading} style={s.btnPrimary}>
               {downloading ? "Generating…" : "Download PDF"}
             </button>
-            <button
-              onClick={handleDelete}
-              disabled={deleting}
-              style={{ background: "none", border: "1px solid #fca5a5", color: "#dc2626", borderRadius: 8, padding: "8px 18px", fontSize: 14, fontWeight: 600, cursor: deleting ? "default" : "pointer", opacity: deleting ? 0.7 : 1 }}
-            >
+            <button onClick={handleDelete} disabled={deleting} style={s.btnDanger}>
               {deleting ? "Deleting…" : "Delete"}
             </button>
           </div>
         )}
       </div>
 
+      {/* Tabs */}
       <div style={s.tabBar}>
         <button style={s.tab(activeTab === "report")} onClick={() => setActiveTab("report")}>Analysis Report</button>
         <button style={s.tab(activeTab === "resume")} onClick={handleResumeTab}>View Resume</button>
@@ -149,8 +431,8 @@ export default function ReportView() {
 
       {activeTab === "resume" && (
         <div style={s.card}>
-          {resumeLoading && <div style={{ textAlign: "center", color: "#6b7280", padding: "40px 0" }}>Loading resume...</div>}
-          {resumeUrl === "error" && <div style={{ color: "#dc2626" }}>Could not load resume file.</div>}
+          {resumeLoading && <div style={{ textAlign: "center", color: "#78716c", padding: "40px 0" }}>Loading resume…</div>}
+          {resumeUrl === "error" && <div style={{ color: "#b91c1c" }}>Could not load resume file.</div>}
           {resumeUrl && resumeUrl !== "error" && (
             <iframe
               src={resumeUrl}
@@ -161,117 +443,96 @@ export default function ReportView() {
         </div>
       )}
 
-      {activeTab === "report" && <div ref={reportRef}>
-      {/* Score + Summary */}
-      <div style={{ ...s.card, display: "grid", gridTemplateColumns: "140px 1fr", gap: 32, alignItems: "start" }}>
-        <ScoreRing score={resumeScore || 0} />
-        <div>
-          <h2 style={{ ...s.sectionTitle, marginBottom: 10 }}>Profile Summary</h2>
-          <p style={s.summary}>{summary}</p>
-          {keyAchievements.length > 0 && (
-            <div style={{ marginTop: 14 }}>
-              <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, color: "#374151" }}>Key Achievements</div>
-              <ul style={s.list}>
-                {keyAchievements.map((a, i) => <li key={i}>{a}</li>)}
-              </ul>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Resume Sections Review */}
-      {Object.keys(resumeSectionsReview).length > 0 && (
-        <div style={{ ...s.card, borderLeft: "4px solid #7c3aed" }}>
-          <h2 style={s.sectionTitle}>Resume Section-by-Section Review</h2>
-          {[
-            ["professional_summary", "Professional Summary"],
-            ["work_experience", "Work Experience"],
-            ["skills_section", "Skills"],
-            ["education", "Education"],
-            ["overall_presentation", "Overall Presentation"],
-          ].map(([key, label]) => resumeSectionsReview[key] ? (
-            <div key={key} style={{ marginBottom: 16 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#7c3aed", marginBottom: 4 }}>{label}</div>
-              <div style={{ fontSize: 14, color: "#374151", lineHeight: 1.6 }}>{resumeSectionsReview[key]}</div>
-            </div>
-          ) : null)}
-        </div>
-      )}
-
-      {/* Critical Improvements */}
-      {criticalImprovements.length > 0 && (
-        <div style={{ ...s.card, borderLeft: "4px solid #f59e0b" }}>
-          <h2 style={s.sectionTitle}>Critical Improvements</h2>
-          <ul style={{ ...s.list, paddingLeft: 18 }}>
-            {criticalImprovements.map((item, i) => (
-              <li key={i} style={{ marginBottom: 10, color: "#374151" }}>{item}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* Skills */}
-      <div style={s.card}>
-        <h2 style={s.sectionTitle}>Skills</h2>
-        <div style={{ marginBottom: 12 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>Highlight These</div>
-          <div style={s.tagRow}>{skillsToHighlight.map((sk, i) => <span key={i} style={s.tag("#16a34a")}>{sk}</span>)}</div>
-        </div>
-        <div>
-          <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>Consider Developing</div>
-          <div style={s.tagRow}>{skillsToDevelop.map((sk, i) => <span key={i} style={s.tag("#d97706")}>{sk}</span>)}</div>
-        </div>
-      </div>
-
-      {/* Top Roles */}
-      <div style={s.card}>
-        <h2 style={s.sectionTitle}>Top Matching Roles</h2>
-        {topRoles.map((role, i) => (
-          <div key={i} style={s.roleCard}>
-            <div style={s.header}>
-              <div style={s.roleTitle}>{role.title}</div>
-              <span style={s.matchBadge(role.match_percentage)}>{role.match_percentage}% match</span>
-            </div>
-            <div style={{ color: "#6b7280", fontSize: 14, marginBottom: 10 }}>{role.reason}</div>
-            {(role.resume_gaps || []).length > 0 && (
-              <div style={{ marginBottom: 10 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: "#dc2626", marginBottom: 4 }}>Gaps to address</div>
-                <ul style={{ margin: 0, paddingLeft: 16 }}>
-                  {(role.resume_gaps || []).map((gap, k) => (
-                    <li key={k} style={{ fontSize: 13, color: "#7f1d1d", marginBottom: 3 }}>{gap}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {(role.application_tips || []).length > 0 && (
-              <div style={{ marginBottom: 10 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: "#2563eb", marginBottom: 4 }}>How to apply</div>
-                <ul style={{ margin: 0, paddingLeft: 16 }}>
-                  {(role.application_tips || []).map((tip, k) => (
-                    <li key={k} style={{ fontSize: 13, color: "#1e40af", marginBottom: 4, lineHeight: 1.5 }}>{tip}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 4 }}>Target Companies</div>
-            <div style={s.companies}>
-              {(role.target_companies || []).map((c, j) => <span key={j} style={s.chip}>{c}</span>)}
+      {activeTab === "report" && (
+        <>
+          {/* Hero: score + summary */}
+          <div style={s.hero}>
+            <ScoreRing score={resumeScore} />
+            <div>
+              <h1 className="display-serif" style={{ fontSize: 26, fontWeight: 700, margin: "0 0 10px", color: "#1c1917", letterSpacing: "-0.015em" }}>
+                Profile Summary
+              </h1>
+              <p style={s.summary}>{summary}</p>
             </div>
           </div>
-        ))}
-      </div>
 
-      {/* Live Jobs — new in Phase 1 */}
-      <JobsSection resultId={result.resultId} />
+          {/* Two-column grid: roles left, skills+review right */}
+          <div style={s.grid2}>
+            {/* Left column */}
+            <div>
+              <div style={s.card}>
+                <h2 style={s.cardTitle}>Top Matching Roles</h2>
+                <div style={s.roleList}>
+                  {topRoles.map((role, i) => (
+                    <RoleCard key={i} role={role} index={i} resultId={resultId} />
+                  ))}
+                </div>
+              </div>
 
-      {/* Job Search Strategies */}
-      <div style={s.card}>
-        <h2 style={s.sectionTitle}>Job Search Strategies</h2>
-        <ol style={s.list}>
-          {jobSearchStrategies.map((strategy, i) => <li key={i} style={{ marginBottom: 6 }}>{strategy}</li>)}
-        </ol>
-      </div>
-      </div>}
+              {keyAchievements.length > 0 && (
+                <div style={s.card}>
+                  <h2 style={s.cardTitle}>Key Achievements</h2>
+                  <ul style={s.list}>
+                    {keyAchievements.map((a, i) => <li key={i}>{a}</li>)}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            {/* Right column */}
+            <div>
+              <SkillsCard highlight={skillsToHighlight} develop={skillsToDevelop} />
+
+              {Object.keys(resumeSectionsReview).length > 0 && (
+                <div style={s.card}>
+                  <h2 style={s.cardTitle}>Section Review</h2>
+                  {[
+                    ["professional_summary", "Professional Summary"],
+                    ["work_experience", "Work Experience"],
+                    ["skills_section", "Skills"],
+                    ["education", "Education"],
+                    ["overall_presentation", "Overall Presentation"],
+                  ].map(([key, label]) => resumeSectionsReview[key] ? (
+                    <div key={key} style={s.sectionReviewItem}>
+                      <div style={s.sectionReviewLabel}>{label}</div>
+                      <div style={s.sectionReviewText}>{resumeSectionsReview[key]}</div>
+                    </div>
+                  ) : null)}
+                </div>
+              )}
+
+              {criticalImprovements.length > 0 && (
+                <div style={{ ...s.card, borderLeft: `4px solid ${GOLD_END}` }}>
+                  <h2 style={s.cardTitle}>Critical Improvements</h2>
+                  <ul style={{ ...s.list, paddingLeft: 18 }}>
+                    {criticalImprovements.map((item, i) => (
+                      <li key={i} style={{ marginBottom: 8 }}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Live jobs — full width */}
+          <JobsSection resultId={result.resultId} />
+
+          {/* Strategies — full width */}
+          {jobSearchStrategies.length > 0 && (
+            <div style={s.card}>
+              <h2 style={s.cardTitle}>Job Search Strategies</h2>
+              <ol style={s.list}>
+                {jobSearchStrategies.map((strategy, i) => <li key={i} style={{ marginBottom: 6 }}>{strategy}</li>)}
+              </ol>
+            </div>
+          )}
+
+          {/* Off-screen print target for PDF downloads */}
+          <div ref={printRef} style={{ position: "absolute", left: -9999, top: 0, width: 820, padding: 24, background: "#fff" }}>
+            <PrintableReport result={result} />
+          </div>
+        </>
+      )}
     </div>
   );
 }

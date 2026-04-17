@@ -7,7 +7,7 @@ import {
 const s = {
   page: { maxWidth: 980, margin: "32px auto", padding: "0 20px 60px" },
   back: {
-    background: "none", border: "none", color: "#2563eb", cursor: "pointer",
+    background: "none", border: "none", color: "#b8860b", cursor: "pointer",
     fontSize: 14, padding: 0, marginBottom: 18, fontWeight: 500,
   },
   grid: { display: "grid", gridTemplateColumns: "minmax(0,1fr) 320px", gap: 20 },
@@ -17,9 +17,9 @@ const s = {
     border: "1px solid #eef1f5",
   },
   hero: {
-    background: "radial-gradient(circle at 20% 0%, #6366f1 0%, #4f46e5 30%, #09090b 80%)",
+    background: "radial-gradient(circle at 20% 0%, #b8860b 0%, #4f46e5 30%, #09090b 80%)",
     color: "#fff", borderRadius: 18, padding: "30px 34px", marginBottom: 22,
-    boxShadow: "0 10px 40px rgba(99,102,241,.18), 0 2px 8px rgba(0,0,0,0.05)",
+    boxShadow: "0 10px 40px rgba(184,134,11,.18), 0 2px 8px rgba(0,0,0,0.05)",
     border: "1px solid rgba(255,255,255,0.06)",
   },
   heroTitle: { fontSize: 26, fontWeight: 800, margin: 0, lineHeight: 1.25 },
@@ -35,13 +35,13 @@ const s = {
   },
   jd: { fontSize: 14, color: "#334155", lineHeight: 1.7, whiteSpace: "pre-wrap" },
   primaryBtn: {
-    background: "linear-gradient(135deg,#6366f1,#8b5cf6)", color: "#fff",
+    background: "linear-gradient(135deg,#b8860b,#d4af37)", color: "#fff",
     border: "none", borderRadius: 10, padding: "12px 20px", fontSize: 14,
     fontWeight: 600, cursor: "pointer", width: "100%",
-    boxShadow: "0 4px 14px rgba(99,102,241,.35)", letterSpacing: "-0.005em",
+    boxShadow: "0 4px 14px rgba(184,134,11,.35)", letterSpacing: "-0.005em",
   },
   outlineBtn: {
-    background: "#fff", color: "#2563eb", border: "1.5px solid #2563eb",
+    background: "#fff", color: "#b8860b", border: "1.5px solid #b8860b",
     borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 600,
     cursor: "pointer", textDecoration: "none", display: "inline-block",
   },
@@ -197,7 +197,7 @@ export default function JobDetail() {
         <div style={{ marginTop: 18, display: "flex", gap: 10, flexWrap: "wrap" }}>
           {job.redirectUrl && (
             <a href={job.redirectUrl} target="_blank" rel="noopener noreferrer"
-               style={{ ...s.outlineBtn, background: "#fff", color: "#1e3a8a" }}>
+               style={{ ...s.outlineBtn, background: "#fff", color: "#1c1917" }}>
               View original posting ↗
             </a>
           )}
@@ -258,7 +258,7 @@ export default function JobDetail() {
                 <label key={opt.v} style={{
                   display: "flex", alignItems: "flex-start", gap: 10,
                   padding: "9px 11px", borderRadius: 8, cursor: "pointer",
-                  border: `1.5px solid ${resumeFormat === opt.v ? "#2563eb" : "#e2e8f0"}`,
+                  border: `1.5px solid ${resumeFormat === opt.v ? "#b8860b" : "#e2e8f0"}`,
                   background: resumeFormat === opt.v ? "#eff6ff" : "#fff",
                   marginBottom: 6, transition: "all .15s",
                 }}>
@@ -268,7 +268,7 @@ export default function JobDetail() {
                     value={opt.v}
                     checked={resumeFormat === opt.v}
                     onChange={() => setResumeFormat(opt.v)}
-                    style={{ marginTop: 2, accentColor: "#2563eb" }}
+                    style={{ marginTop: 2, accentColor: "#b8860b" }}
                   />
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 600, color: "#0f172a" }}>{opt.t}</div>

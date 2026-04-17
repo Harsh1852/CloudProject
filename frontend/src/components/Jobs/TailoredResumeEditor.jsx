@@ -14,17 +14,17 @@ const s = {
     marginBottom: 18, flexWrap: "wrap", gap: 10,
   },
   back: {
-    background: "none", border: "none", color: "#2563eb", cursor: "pointer",
+    background: "none", border: "none", color: "#b8860b", cursor: "pointer",
     fontSize: 14, padding: 0, fontWeight: 500,
   },
   btnPrimary: {
-    background: "linear-gradient(135deg,#6366f1,#8b5cf6)", color: "#fff",
+    background: "linear-gradient(135deg,#b8860b,#d4af37)", color: "#fff",
     border: "none", borderRadius: 10, padding: "10px 20px", fontSize: 13,
-    fontWeight: 600, cursor: "pointer", boxShadow: "0 2px 10px rgba(99,102,241,.3)",
+    fontWeight: 600, cursor: "pointer", boxShadow: "0 2px 10px rgba(184,134,11,.3)",
     letterSpacing: "-0.005em",
   },
   btnOutline: {
-    background: "#fff", color: "#2563eb", border: "1.5px solid #2563eb",
+    background: "#fff", color: "#b8860b", border: "1.5px solid #b8860b",
     borderRadius: 10, padding: "9px 18px", fontSize: 13, fontWeight: 600,
     cursor: "pointer", textDecoration: "none", display: "inline-block",
   },
@@ -37,7 +37,7 @@ const s = {
   metaStrong: { color: "#0f172a", fontWeight: 700 },
   formatPill: {
     fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 20,
-    background: "#eff6ff", color: "#1d4ed8",
+    background: "#eff6ff", color: "#a16207",
   },
   editorCard: {
     background: "#fff", borderRadius: 14, padding: 16,

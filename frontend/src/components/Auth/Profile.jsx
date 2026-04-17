@@ -8,12 +8,12 @@ const s = {
   sectionTitle: { fontSize: 17, fontWeight: 700, margin: "0 0 20px" },
   label: { display: "block", marginBottom: 6, fontSize: 14, fontWeight: 500, color: "#374151" },
   input: { width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: 8, fontSize: 15, outline: "none", marginBottom: 16, boxSizing: "border-box" },
-  btn: { padding: "10px 24px", background: "#2563eb", color: "#fff", border: "none", borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: "pointer" },
-  btnOutline: { padding: "10px 24px", background: "none", border: "1px solid #2563eb", color: "#2563eb", borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: "pointer" },
+  btn: { padding: "10px 24px", background: "#b8860b", color: "#fff", border: "none", borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: "pointer" },
+  btnOutline: { padding: "10px 24px", background: "none", border: "1px solid #b8860b", color: "#b8860b", borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: "pointer" },
   err: { color: "#dc2626", fontSize: 13, marginBottom: 12 },
   ok: { color: "#16a34a", fontSize: 13, marginBottom: 12 },
   divider: { border: "none", borderTop: "1px solid #e5e7eb", margin: "4px 0 20px" },
-  backBtn: { background: "none", border: "none", color: "#2563eb", cursor: "pointer", fontSize: 14, padding: 0, marginBottom: 20 },
+  backBtn: { background: "none", border: "none", color: "#b8860b", cursor: "pointer", fontSize: 14, padding: 0, marginBottom: 20 },
 };
 
 function getUserInfo() {

@@ -9,7 +9,7 @@ import {
 const s = {
   page: { maxWidth: 980, margin: "28px auto", padding: "0 24px 60px" },
   back: {
-    background: "none", border: "none", color: "#2563eb", cursor: "pointer",
+    background: "none", border: "none", color: "#b8860b", cursor: "pointer",
     fontSize: 14, padding: 0, marginBottom: 16, fontWeight: 500,
   },
   card: {
@@ -49,9 +49,9 @@ const s = {
     display: "flex", alignItems: "center", gap: 8,
   },
   btnPrimary: {
-    background: "linear-gradient(135deg,#6366f1,#8b5cf6)", color: "#fff",
+    background: "linear-gradient(135deg,#b8860b,#d4af37)", color: "#fff",
     border: "none", borderRadius: 10, padding: "10px 18px", fontSize: 13,
-    fontWeight: 600, cursor: "pointer", boxShadow: "0 2px 10px rgba(99,102,241,.3)",
+    fontWeight: 600, cursor: "pointer", boxShadow: "0 2px 10px rgba(184,134,11,.3)",
     letterSpacing: "-0.005em",
   },
   btnGhost: {
@@ -90,8 +90,8 @@ const s = {
   timelineItem: { position: "relative", paddingBottom: 14 },
   timelineDot: {
     position: "absolute", left: -21, top: 4, width: 10, height: 10,
-    borderRadius: "50%", background: "#2563eb", border: "2px solid #fff",
-    boxShadow: "0 0 0 2px #2563eb",
+    borderRadius: "50%", background: "#b8860b", border: "2px solid #fff",
+    boxShadow: "0 0 0 2px #b8860b",
   },
   timelineStatus: { fontSize: 13, fontWeight: 600, color: "#0f172a" },
   timelineMeta: { fontSize: 11, color: "#64748b", marginTop: 2 },

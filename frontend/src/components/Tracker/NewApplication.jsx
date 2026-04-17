@@ -5,7 +5,7 @@ import { createApplication, APPLICATION_STATUSES } from "../../services/api";
 const s = {
   page: { maxWidth: 680, margin: "32px auto", padding: "0 24px 60px" },
   back: {
-    background: "none", border: "none", color: "#2563eb", cursor: "pointer",
+    background: "none", border: "none", color: "#b8860b", cursor: "pointer",
     fontSize: 14, padding: 0, marginBottom: 18, fontWeight: 500,
   },
   card: {
@@ -33,9 +33,9 @@ const s = {
   },
   toolbar: { display: "flex", gap: 10, marginTop: 22 },
   btnPrimary: {
-    background: "linear-gradient(135deg,#6366f1,#8b5cf6)", color: "#fff",
+    background: "linear-gradient(135deg,#b8860b,#d4af37)", color: "#fff",
     border: "none", borderRadius: 10, padding: "11px 22px", fontSize: 14,
-    fontWeight: 600, cursor: "pointer", boxShadow: "0 4px 14px rgba(99,102,241,.35)",
+    fontWeight: 600, cursor: "pointer", boxShadow: "0 4px 14px rgba(184,134,11,.35)",
     letterSpacing: "-0.005em",
   },
   btnGhost: {
